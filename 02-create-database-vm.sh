@@ -1,13 +1,17 @@
 echo -e "Create a database vm named $DB_VM_NAME with image $DB_VM_IMAGE"
-az vm create \
+FQDN_DB_VM=$(az vm create \
 --resource-group $RESOURCE_GROUP \
 --name $DB_VM_NAME \
 --image $DB_VM_IMAGE \
 --admin-username $DB_VM_ADMIN_USERNAME \
 --admin-password $DB_VM_ADMIN_PASSWORD \
+--public-ip-address-dns-name tour-of-heroes-db-vm \
 --vnet-name $VNET_NAME \
 --subnet $DB_SUBNET_NAME \
---size $VM_SIZE
+--size $VM_SIZE \
+--nsg $DB_VM_NSG_NAME --query "fqdns" -o tsv)
+
+echo -e "You can connect using $FQDN_DB_VM"
 
 echo -e "Create a storage acount for the backups"
 az storage account create \
@@ -44,11 +48,6 @@ az sql vm create \
 
 echo -e "Database vm created"
 
-echo -e "Create a network security group for the database vm"
-az network nsg create \
---resource-group $RESOURCE_GROUP \
---name $DB_VM_NSG_NAME
-
 echo -e "Create a network security group rule for SQL Server port 1433"
 az network nsg rule create \
 --resource-group $RESOURCE_GROUP \
@@ -72,12 +71,3 @@ az network nic update \
 --resource-group $RESOURCE_GROUP \
 --name "${DB_VM_NAME}VMNic" \
 --network-security-group $DB_VM_NSG_NAME
-
-# Get public IP
-DB_VM_PUBLIC_IP=$(az vm list-ip-addresses \
---resource-group $RESOURCE_GROUP \
---name $DB_VM_NAME \
---query "[].virtualMachine.network.publicIpAddresses[].ipAddress" \
---output tsv)
-
-echo -e "Database vm public IP: $DB_VM_PUBLIC_IP"

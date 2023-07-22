@@ -28,6 +28,8 @@ API_VM_NAME="api-vm"
 API_VM_IMAGE="UbuntuLTS"
 API_VM_ADMIN_USERNAME="apiadmin"
 API_VM_ADMIN_PASSWORD="Api@dmin1232!"
+API_VM_NSG_NAME="api-vm-nsg"
+
 
 # Frontend VM on Azure
 FRONTEND_VM_NAME="frontend-vm"

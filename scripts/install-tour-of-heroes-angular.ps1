@@ -16,6 +16,9 @@ Invoke-WebRequest -Uri https://github.com/0GiS0/tour-of-heroes-angular/releases/
 Write-Output "Unzip the frontend app in the folder"
 Expand-Archive -Path C:\Temp\dist.zip -DestinationPath C:\inetpub\wwwroot\frontend
 
+Write-Output "Replace environment variables like envsubst in linux"
+(Get-Content -path C:\inetpub\wwwroot\frontend\assets\env.template.js) | ForEach-Object { $_ -replace '${API_URL}', 'http://tour-of-heroes-api-vm.westeurope.cloudapp.azure.com/api/hero' } | Set-Content -Path C:\inetpub\wwwroot\frontend\assets\env.js
+
 Write-Output "Create a new website in IIS"
 New-IISSite -Name "TourOfHeroesAngular" -BindingInformation "*:8080:" -PhysicalPath "$env:systemdrive\inetpub\wwwroot\frontend"
 

@@ -1,5 +1,5 @@
 echo -e "Install nginx server"
-sudo apt update && sudo apt install -y nginx
+sudo apt update && sudo apt install -y nginx unzip
 
 echo -e "Install .NET Core"
 wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && sudo apt-get update && sudo apt-get install -y aspnetcore-runtime-7.0
@@ -17,6 +17,12 @@ systemctl status nginx
 sudo mkdir -p /var/www/tour-of-heroes-api
 sudo chown -R $USER:$USER /var/www/tour-of-heroes-api
 sudo chmod -R 755 /var/www/tour-of-heroes-api
+
+echo -e "Download the last release of the api app from github"
+wget https://github.com/0GiS0/tour-of-heroes-dotnet-api/releases/download/1.0.5/drop.zip -O drop.zip
+
+echo -e "Unzip the api app"
+unzip drop.zip -d /var/www/tour-of-heroes-api
 
 sudo sed -i 's/# server_names_hash_bucket_size 64;/server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf
 
@@ -64,8 +70,5 @@ sudo systemctl enable tour-of-heroes-api.service
 sudo systemctl start tour-of-heroes-api.service
 # sudo systemctl disable tour-of-heroes-api.service
 sudo systemctl status tour-of-heroes-api.service
-
-
-
 
 # journalctl -u tour-of-heroes-api.service

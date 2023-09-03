@@ -4,14 +4,6 @@ sudo apt update && sudo apt install -y nginx unzip
 echo -e "Install .NET Core"
 wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && sudo dpkg -i packages-microsoft-prod.deb && rm packages-microsoft-prod.deb && sudo apt-get update && sudo apt-get install -y aspnetcore-runtime-7.0
 
-# echo -e "Add firewall rules"
-# sudo ufw allow 'Nginx Full'
-# sudo ufw status
-
-# echo -e "Activate firewall"
-# sudo ufw enable
-# sudo ufw app list
-
 systemctl status nginx
 
 sudo mkdir -p /var/www/tour-of-heroes-api
@@ -29,7 +21,7 @@ sudo sed -i 's/# server_names_hash_bucket_size 64;/server_names_hash_bucket_size
 sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/tour-of-heroes-api.conf
 server {
      listen        80;
-     server_name   tour-of-heroes-api-vm.westeurope.cloudapp.azure.com;
+     server_name   tour-of-heroes-api-vm.uksouth.cloudapp.azure.com;
      location / {
          proxy_pass         http://localhost:5000;
          proxy_http_version 1.1;
@@ -61,6 +53,7 @@ SyslogIdentifier=dotnet-tour-of-heroes-api
 User=www-data
 Environment=ASPNETCORE_ENVIRONMENT=Development
 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
+Environment=ConnectionStrings__DefaultConnection="Server=192.168.1.4,1433;Initial Catalog=heroes;Persist Security Info=False;User ID=dbadmin;Password=Db@dmin123!$;TrustServerCertificate=True"
 
 [Install]
 WantedBy=multi-user.target

@@ -14,15 +14,6 @@ FQDN_FRONTEND_VM=$(az vm create \
 
 echo -e "Frontend vm created with FQDN $FQDN_FRONTEND_VM"
 
-# echo -e "Create a network security group rule for ssh port 22 for PSSession"
-# az network nsg rule create \
-# --resource-group $RESOURCE_GROUP \
-# --nsg-name $FRONTEND_VM_NSG_NAME \
-# --name AllowSsh \
-# --priority 1001 \
-# --destination-port-ranges 22 \
-# --direction Inbound
-
 az network nsg rule create \
 --resource-group $RESOURCE_GROUP \
 --nsg-name $FRONTEND_VM_NSG_NAME \

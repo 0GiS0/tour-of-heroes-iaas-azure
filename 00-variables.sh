@@ -1,6 +1,6 @@
 # General variables
 RESOURCE_GROUP="tour-of-heroes-on-vms"
-LOCATION="westeurope"
+LOCATION="uksouth"
 VM_SIZE="Standard_B2s"
 
 STORAGE_ACCOUNT_NAME="tourofheroesbackups"

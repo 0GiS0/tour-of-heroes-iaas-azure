@@ -1,17 +1,15 @@
 echo -e "Create a database vm named $DB_VM_NAME with image $DB_VM_IMAGE"
-FQDN_DB_VM=$(az vm create \
+az vm create \
 --resource-group $RESOURCE_GROUP \
 --name $DB_VM_NAME \
 --image $DB_VM_IMAGE \
 --admin-username $DB_VM_ADMIN_USERNAME \
 --admin-password $DB_VM_ADMIN_PASSWORD \
---public-ip-address-dns-name tour-of-heroes-db-vm \
 --vnet-name $VNET_NAME \
 --subnet $DB_SUBNET_NAME \
+--public-ip-address "" \
 --size $VM_SIZE \
---nsg $DB_VM_NSG_NAME --query "fqdns" -o tsv)
-
-echo -e "You can connect using $FQDN_DB_VM"
+--nsg $DB_VM_NSG_NAME 
 
 echo -e "Create a storage acount for the backups"
 az storage account create \
@@ -33,7 +31,7 @@ az sql vm create \
 --license-type payg \
 --resource-group $RESOURCE_GROUP \
 --location $LOCATION \
---connectivity-type PUBLIC \
+--connectivity-type PRIVATE \
 --port 1433 \
 --sql-auth-update-username $DB_VM_ADMIN_USERNAME \
 --sql-auth-update-pwd $DB_VM_ADMIN_PASSWORD \
@@ -55,19 +53,21 @@ az network nsg rule create \
 --name AllowSQLServer \
 --priority 1001 \
 --destination-port-ranges 1433 \
+--protocol Tcp \
+--source-address-prefixes $API_SUBNET_ADDRESS_PREFIX \
 --direction Inbound
 
-echo -e "Create a network security group rule for RDP port 3389"
-az network nsg rule create \
---resource-group $RESOURCE_GROUP \
---nsg-name $DB_VM_NSG_NAME \
---name AllowRDP \
---priority 1002 \
---destination-port-ranges 3389 \
---direction Inbound
+# echo -e "Create a network security group rule for RDP port 3389"
+# az network nsg rule create \
+# --resource-group $RESOURCE_GROUP \
+# --nsg-name $DB_VM_NSG_NAME \
+# --name AllowRDP \
+# --priority 1002 \
+# --destination-port-ranges 3389 \
+# --direction Inbound
 
-echo -e "Associate the network security group to the database vm"
-az network nic update \
---resource-group $RESOURCE_GROUP \
---name "${DB_VM_NAME}VMNic" \
---network-security-group $DB_VM_NSG_NAME
+# echo -e "Associate the network security group to the database vm"
+# az network nic update \
+# --resource-group $RESOURCE_GROUP \
+# --name "${DB_VM_NAME}VMNic" \
+# --network-security-group $DB_VM_NSG_NAME

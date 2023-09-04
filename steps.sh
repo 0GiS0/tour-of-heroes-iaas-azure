@@ -12,6 +12,3 @@ source 03-create-api-vm.sh
 
 # Create the frontend vm
 source 04-create-front-end-vm.sh
-
-# Test the app
-source 05-test-app.sh

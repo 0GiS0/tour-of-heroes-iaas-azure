@@ -30,4 +30,5 @@ az vm run-command invoke \
 --resource-group $RESOURCE_GROUP \
 --name $API_VM_NAME \
 --command-id RunShellScript \
---scripts @scripts/install-tour-of-heroes-api.sh
+--scripts @scripts/install-tour-of-heroes-api.sh \
+--parameters https://github.com/0GiS0/tour-of-heroes-dotnet-api/releases/download/1.0.5/drop.zip $FQDN_API_VM $DB_VM_ADMIN_USERNAME $DB_VM_ADMIN_PASSWORD

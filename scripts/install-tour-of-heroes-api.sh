@@ -11,17 +11,17 @@ sudo chown -R $USER:$USER /var/www/tour-of-heroes-api
 sudo chmod -R 755 /var/www/tour-of-heroes-api
 
 echo -e "Download the last release of the api app from github"
-wget https://github.com/0GiS0/tour-of-heroes-dotnet-api/releases/download/1.0.5/drop.zip -O drop.zip
+wget $1 -O drop.zip
 
 echo -e "Unzip the api app"
 unzip drop.zip -d /var/www/tour-of-heroes-api
 
 sudo sed -i 's/# server_names_hash_bucket_size 64;/server_names_hash_bucket_size 128;/g' /etc/nginx/nginx.conf
 
-sudo bash -c 'cat <<EOF > /etc/nginx/sites-available/tour-of-heroes-api.conf
+sudo SERVER_NAME=$2 bash -c 'cat > /etc/nginx/sites-available/tour-of-heroes-api.conf <<EOF
 server {
      listen        80;
-     server_name   tour-of-heroes-api-vm.uksouth.cloudapp.azure.com;
+     server_name   $SERVER_NAME;
      location / {
          proxy_pass         http://localhost:5000;
          proxy_http_version 1.1;
@@ -39,7 +39,7 @@ sudo ln -s /etc/nginx/sites-available/tour-of-heroes-api.conf /etc/nginx/sites-e
 sudo nginx -t
 sudo systemctl restart nginx
 
-sudo bash -c 'cat <<EOF > /etc/systemd/system/tour-of-heroes-api.service
+sudo bash -c "cat <<EOF > /etc/systemd/system/tour-of-heroes-api.service
 [Unit]
 Description=Tour of heroes .NET Web API App running on Ubuntu
 
@@ -53,11 +53,11 @@ SyslogIdentifier=dotnet-tour-of-heroes-api
 User=www-data
 Environment=ASPNETCORE_ENVIRONMENT=Development
 Environment=DOTNET_PRINT_TELEMETRY_MESSAGE=false
-Environment=ConnectionStrings__DefaultConnection="Server=192.168.1.4,1433;Initial Catalog=heroes;Persist Security Info=False;User ID=dbadmin;Password=Db@dmin123!$;TrustServerCertificate=True"
+Environment=ConnectionStrings__DefaultConnection='Server=192.168.1.4,1433;Initial Catalog=heroes;Persist Security Info=False;User ID=$3;Password=$4;TrustServerCertificate=True'
 
 [Install]
 WantedBy=multi-user.target
-EOF'
+EOF"
 
 sudo systemctl enable tour-of-heroes-api.service
 sudo systemctl start tour-of-heroes-api.service

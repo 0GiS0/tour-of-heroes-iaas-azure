@@ -12,3 +12,9 @@ source 03-create-api-vm.sh
 
 # Create the frontend vm
 source 04-create-front-end-vm.sh
+
+# Create a public load balancer for the frontend vm
+source 05-create-public-lb-for-front-end.sh
+
+# Tour of heroes API URL: http://tour-of-heroes-api-vm.uksouth.cloudapp.azure.com/api/hero
+# Tour of heroes Web URL: http://tour-of-heroes-frontend-vm.uksouth.cloudapp.azure.com

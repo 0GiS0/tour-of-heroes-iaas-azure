@@ -13,7 +13,6 @@ FQDN_API_VM=$(az vm create \
 --size $VM_SIZE --query "fqdns" -o tsv)
 
 echo -e "Api VM created"
-echo -e "You can connect using $FQDN_API_VM"
 
 echo -e "Create a network security group rule for port 80"
 az network nsg rule create \
@@ -32,3 +31,5 @@ az vm run-command invoke \
 --command-id RunShellScript \
 --scripts @scripts/install-tour-of-heroes-api.sh \
 --parameters https://github.com/0GiS0/tour-of-heroes-dotnet-api/releases/download/1.0.5/drop.zip $FQDN_API_VM $DB_VM_ADMIN_USERNAME $DB_VM_ADMIN_PASSWORD
+
+echo -e "You can connect using $FQDN_API_VM"

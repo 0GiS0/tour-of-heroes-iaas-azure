@@ -32,4 +32,4 @@ az vm run-command invoke \
 --scripts @scripts/install-tour-of-heroes-api.sh \
 --parameters https://github.com/0GiS0/tour-of-heroes-dotnet-api/releases/download/1.0.5/drop.zip $FQDN_API_VM $DB_VM_ADMIN_USERNAME $DB_VM_ADMIN_PASSWORD
 
-echo -e "You can connect using $FQDN_API_VM"
+echo -e "You can connect using http://$FQDN_API_VM"

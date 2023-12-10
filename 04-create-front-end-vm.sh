@@ -12,8 +12,6 @@ FQDN_FRONTEND_VM=$(az vm create \
 --nsg $FRONTEND_VM_NSG_NAME \
 --size $VM_SIZE --query "fqdns" -o tsv)
 
-echo -e "Frontend vm created with FQDN $FQDN_FRONTEND_VM"
-
 az network nsg rule create \
 --resource-group $RESOURCE_GROUP \
 --nsg-name $FRONTEND_VM_NSG_NAME \
@@ -37,3 +35,5 @@ az vm run-command invoke \
 --command-id RunPowerShellScript \
 --scripts @scripts/install-tour-of-heroes-angular.ps1 \
 --parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/1.1.4/dist.zip"
+
+echo -e "You can connect using http://$FQDN_FRONTEND_VM"

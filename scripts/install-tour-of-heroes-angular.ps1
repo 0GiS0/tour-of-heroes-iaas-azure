@@ -7,10 +7,10 @@ Write-Output "Install IIS on the frontend vm"
 Install-WindowsFeature -name Web-Server -IncludeManagementTools
 
 Write-Output "Download URL Rewrite Module"
-Invoke-WebRequest -Uri "https://www.microsoft.com/web/handlers/webpi.ashx?command=getinstallerredirect&appid=urlrewrite2" -OutFile C:\Temp\urlrewrite2.exe
+Invoke-WebRequest -Uri "https://download.microsoft.com/download/1/2/8/128E2E22-C1B9-44A4-BE2A-5859ED1D4592/rewrite_amd64_en-US.msi" -OutFile C:\Temp\rewrite_amd64_en-US.msi
 
 Write-Output "Install URL Rewrite Module"
-C:\Temp\urlrewrite2.exe /install /quiet
+Start-Process -FilePath "C:\Temp\rewrite_amd64_en-US.msi" -ArgumentList "/quiet" -Wait
 
 Write-Output "Create a folder for the frontend app"
 mkdir $env:systemdrive\inetpub\wwwroot\frontend

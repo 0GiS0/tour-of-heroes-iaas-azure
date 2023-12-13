@@ -71,7 +71,7 @@ FRONTEND_LB_PUBLIC_IP=$(az network public-ip show \
 --query ipAddress \
 --output tsv)
 
-echo -e "Front end VM public IP address: http://$FRONTEND_LB_PUBLIC_IP"
+echo -e "Load balancer public IP address: http://$FRONTEND_LB_PUBLIC_IP"
 
 echo -e "Create a frontend vm #2 named ${FRONTEND_VM_NAME}-2 with image $FRONTEND_VM_IMAGE"
 
@@ -83,8 +83,8 @@ FQDN_FRONTEND_VM_2=$(az vm create \
 --admin-password $FRONTEND_VM_ADMIN_PASSWORD \
 --vnet-name $VNET_NAME \
 --subnet $FRONTEND_SUBNET_NAME \
---public-ip-address-dns-name tour-of-heroes-frontend-vm \
---nsg $FRONTEND_VM_NSG_NAME \
+--public-ip-address-dns-name tour-of-heroes-frontend-vm-2 \
+--nsg "${FRONTEND_VM_NSG_NAME}-2" \
 --size $VM_SIZE --query "fqdns" -o tsv)
 
 az network nsg rule create \

@@ -18,3 +18,6 @@ source 05-create-public-lb-for-front-end.sh
 
 # Tour of heroes API URL: http://tour-of-heroes-api-vm.uksouth.cloudapp.azure.com/api/hero
 # Tour of heroes Web URL: http://tour-of-heroes-frontend-vm.uksouth.cloudapp.azure.com
+
+# Clean up
+source 06-cleanup.sh

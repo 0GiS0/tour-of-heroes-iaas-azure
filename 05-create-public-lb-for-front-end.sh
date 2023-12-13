@@ -109,7 +109,7 @@ az vm run-command invoke \
 --name "${FRONTEND_VM_NAME}-2" \
 --command-id RunPowerShellScript \
 --scripts @scripts/install-tour-of-heroes-angular.ps1 \
---parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/v1.28.0/dist.zip"
+--parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/v2.0.1/dist.zip"
 
 
 echo -e "Get front end VM 2 private IP address"

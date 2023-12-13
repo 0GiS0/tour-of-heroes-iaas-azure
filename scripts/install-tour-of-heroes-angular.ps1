@@ -6,7 +6,7 @@ param(
 Write-Output "Install IIS on the frontend vm"
 Install-WindowsFeature -name Web-Server -IncludeManagementTools
 
-Write-Output "Download URL Rewrite Module"
+Write-Output "Download URL Rewrite Module from here https://www.iis.net/downloads/microsoft/url-rewrite"
 Invoke-WebRequest -Uri "https://download.microsoft.com/download/1/2/8/128E2E22-C1B9-44A4-BE2A-5859ED1D4592/rewrite_amd64_en-US.msi" -OutFile C:\Temp\rewrite_amd64_en-US.msi
 
 Write-Output "Install URL Rewrite Module"

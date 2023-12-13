@@ -72,3 +72,61 @@ FRONTEND_LB_PUBLIC_IP=$(az network public-ip show \
 --output tsv)
 
 echo -e "Front end VM public IP address: http://$FRONTEND_LB_PUBLIC_IP"
+
+echo -e "Create a frontend vm #2 named ${FRONTEND_VM_NAME}-2 with image $FRONTEND_VM_IMAGE"
+
+FQDN_FRONTEND_VM_2=$(az vm create \
+--resource-group $RESOURCE_GROUP \
+--name "${FRONTEND_VM_NAME}-2" \
+--image $FRONTEND_VM_IMAGE \
+--admin-username $FRONTEND_VM_ADMIN_USERNAME \
+--admin-password $FRONTEND_VM_ADMIN_PASSWORD \
+--vnet-name $VNET_NAME \
+--subnet $FRONTEND_SUBNET_NAME \
+--public-ip-address-dns-name tour-of-heroes-frontend-vm \
+--nsg $FRONTEND_VM_NSG_NAME \
+--size $VM_SIZE --query "fqdns" -o tsv)
+
+az network nsg rule create \
+--resource-group $RESOURCE_GROUP \
+--nsg-name "${FRONTEND_VM_NSG_NAME}-2" \
+--name AllowHttp \
+--priority 1002 \
+--destination-port-ranges 80 \
+--direction Inbound
+
+az network nsg rule create \
+--resource-group $RESOURCE_GROUP \
+--nsg-name "${FRONTEND_VM_NSG_NAME}-2" \
+--name Allow8080 \
+--priority 1003 \
+--destination-port-ranges 8080 \
+--direction Inbound
+
+echo -e "Execute script to install IIS and deploy tour-of-heroes-angular SPA"
+az vm run-command invoke \
+--resource-group $RESOURCE_GROUP \
+--name "${FRONTEND_VM_NAME}-2" \
+--command-id RunPowerShellScript \
+--scripts @scripts/install-tour-of-heroes-angular.ps1 \
+--parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/1.1.4/dist.zip"
+
+
+echo -e "Get front end VM 2 private IP address"
+
+FRONTEND_VM_PRIVATE_IP_2=$(az vm show \
+--resource-group $RESOURCE_GROUP \
+--name "${FRONTEND_VM_NAME}-2" \
+--show-details \
+--query privateIps \
+--output tsv)
+
+echo -e "Add the frontend vm 2 to the backend pool"
+
+az network lb address-pool address add  \
+--resource-group $RESOURCE_GROUP \
+--lb-name $LOAD_BALANCER_NAME \
+--pool-name frontend-backend-pool \
+--name tour-of-heroes-front-end-vm-2 \
+--ip-address $FRONTEND_VM_PRIVATE_IP_2 \
+--vnet $VNET_NAME

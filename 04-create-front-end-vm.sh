@@ -34,6 +34,6 @@ az vm run-command invoke \
 --name $FRONTEND_VM_NAME \
 --command-id RunPowerShellScript \
 --scripts @scripts/install-tour-of-heroes-angular.ps1 \
---parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/v1.28.0/dist.zip"
+--parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/v1.29.0/dist.zip"
 
 echo -e "You can connect using http://$FQDN_FRONTEND_VM"

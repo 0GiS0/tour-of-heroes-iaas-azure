@@ -71,8 +71,6 @@ FRONTEND_LB_PUBLIC_IP=$(az network public-ip show \
 --query ipAddress \
 --output tsv)
 
-echo -e "Load balancer public IP address: http://$FRONTEND_LB_PUBLIC_IP"
-
 echo -e "Create a frontend vm #2 named ${FRONTEND_VM_NAME}-2 with image $FRONTEND_VM_IMAGE"
 
 FQDN_FRONTEND_VM_2=$(az vm create \
@@ -109,7 +107,7 @@ az vm run-command invoke \
 --name "${FRONTEND_VM_NAME}-2" \
 --command-id RunPowerShellScript \
 --scripts @scripts/install-tour-of-heroes-angular.ps1 \
---parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/v2.0.1/dist.zip"
+--parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/v2.0.5/dist.zip"
 
 
 echo -e "Get front end VM 2 private IP address"
@@ -130,3 +128,8 @@ az network lb address-pool address add  \
 --name tour-of-heroes-front-end-vm-2 \
 --ip-address $FRONTEND_VM_PRIVATE_IP_2 \
 --vnet $VNET_NAME
+
+echo -e "Frontend VM 2 public IP address: http://$FQDN_FRONTEND_VM_2"
+echo -e "Load balancer public IP address: http://$FRONTEND_LB_PUBLIC_IP"
+
+# https://learn.microsoft.com/en-us/azure/load-balancer/distribution-mode-concepts

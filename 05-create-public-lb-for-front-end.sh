@@ -87,8 +87,38 @@ az network lb address-pool create \
 
 echo -e "Create blue public IP"
 
+az network public-ip create \
+--resource-group $RESOURCE_GROUP \
+--name $BLUE_IP_NAME \
+--sku Standard
 
+az network lb address-pool create \
+--resource-group $RESOURCE_GROUP \
+--lb-name $LOAD_BALANCER_NAME \
+--name $BLUE_BACKEND_POOL_NAME
 
+echo -e "Add blue public IP to the load balancer"
+
+az network lb frontend-ip create \
+--resource-group $RESOURCE_GROUP \
+--lb-name $LOAD_BALANCER_NAME \
+--name $BLUE_IP_NAME \
+--public-ip-address $BLUE_IP_NAME
+
+echo -e "Create blue load balancer rule"
+
+az network lb rule create \
+--resource-group $RESOURCE_GROUP \
+--lb-name $LOAD_BALANCER_NAME \
+--name myHTTPRule2 \
+--protocol tcp \
+--frontend-port 8080 \
+--backend-port 8080 \
+--frontend-ip-name $BLUE_IP_NAME \
+--backend-pool-name $BLUE_BACKEND_POOL_NAME \
+--probe-name $PROBE_NAME \
+--disable-outbound-snat true \
+--idle-timeout 15
 
 echo -e "Create a frontend vm #2 named ${FRONTEND_VM_NAME}-2 with image $FRONTEND_VM_IMAGE"
 

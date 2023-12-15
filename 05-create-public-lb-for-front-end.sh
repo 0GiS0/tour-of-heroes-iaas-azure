@@ -4,13 +4,15 @@ BLUE_IP_NAME="blue-ip"
 PROBE_NAME="frontend-probe"
 GREEN_BACKEND_POOL_NAME="green-backend-pool"
 BLUE_BACKEND_POOL_NAME="blue-backend-pool"
+TRAFFIC_MANAGER_NAME="tour-of-heroes-tm"
 
 echo -e "Create a public IP"
 
 az network public-ip create \
 --resource-group $RESOURCE_GROUP \
 --name $GREEN_IP_NAME \
---sku Standard
+--sku Standard \
+--dns-name $GREEN_IP_NAME
 
 echo -e "Create a load balancer"
 
@@ -90,7 +92,8 @@ echo -e "Create blue public IP"
 az network public-ip create \
 --resource-group $RESOURCE_GROUP \
 --name $BLUE_IP_NAME \
---sku Standard
+--sku Standard \
+--dns-name $BLUE_IP_NAME
 
 az network lb address-pool create \
 --resource-group $RESOURCE_GROUP \
@@ -112,7 +115,7 @@ az network lb rule create \
 --lb-name $LOAD_BALANCER_NAME \
 --name myHTTPRule2 \
 --protocol tcp \
---frontend-port 8080 \
+--frontend-port 80 \
 --backend-port 8080 \
 --frontend-ip-name $BLUE_IP_NAME \
 --backend-pool-name $BLUE_BACKEND_POOL_NAME \
@@ -156,7 +159,7 @@ az vm run-command invoke \
 --name "${FRONTEND_VM_NAME}-2" \
 --command-id RunPowerShellScript \
 --scripts @scripts/install-tour-of-heroes-angular.ps1 \
---parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/v2.0.5/dist.zip"
+--parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-web/releases/download/v2.0.0/dist.zip"
 
 
 echo -e "Get front end VM 2 private IP address"
@@ -173,8 +176,8 @@ echo -e "Add the frontend vm 2 to the blue backend pool"
 az network lb address-pool address add  \
 --resource-group $RESOURCE_GROUP \
 --lb-name $LOAD_BALANCER_NAME \
---pool-name frontend-backend-pool \
---name tour-of-heroes-front-end-vm-2 \
+--pool-name $BLUE_BACKEND_POOL_NAME \
+--name "${FRONTEND_VM_NAME}-2" \
 --ip-address $FRONTEND_VM_PRIVATE_IP_2 \
 --vnet $VNET_NAME
 
@@ -188,5 +191,50 @@ echo -e "Create a Traffic Manager profile"
 az network traffic-manager profile create \
 --resource-group $RESOURCE_GROUP \
 --name $TRAFFIC_MANAGER_NAME \
---routing-method Priority \
---unique-dns-name $TRAFFIC_MANAGER_DNS_NAME
+--routing-method Weighted \
+--unique-dns-name $TRAFFIC_MANAGER_NAME
+
+echo -e "Create a Traffic Manager endpoint for the green backend pool"
+
+GREEN_IP_ID=$(az network public-ip show \
+--resource-group $RESOURCE_GROUP \
+--name $GREEN_IP_NAME \
+--query id \
+--output tsv)
+
+az network traffic-manager endpoint create \
+--resource-group $RESOURCE_GROUP \
+--profile-name $TRAFFIC_MANAGER_NAME \
+--name green \
+--type azureEndpoints \
+--target-resource-id $GREEN_IP_ID \
+--endpoint-status Enabled \
+--weight 500
+
+
+BLUE_IP_ID=$(az network public-ip show \
+--resource-group $RESOURCE_GROUP \
+--name $BLUE_IP_NAME \
+--query id \
+--output tsv)
+
+echo -e "Create a Traffic Manager endpoint for the blue backend pool"
+
+az network traffic-manager endpoint create \
+--resource-group $RESOURCE_GROUP \
+--profile-name $TRAFFIC_MANAGER_NAME \
+--name blue \
+--type azureEndpoints \
+--target-resource-id $BLUE_IP_ID \
+--endpoint-status Enabled \
+--weight 500
+
+echo -e "Get Traffic Manager DNS name"
+
+TRAFFIC_MANAGER_DNS_NAME=$(az network traffic-manager profile show \
+--resource-group $RESOURCE_GROUP \
+--name $TRAFFIC_MANAGER_NAME \
+--query dnsConfig.fqdn \
+--output tsv)
+
+echo -e "Traffic Manager DNS name: http://$TRAFFIC_MANAGER_DNS_NAME"

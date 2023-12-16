@@ -12,6 +12,20 @@ Invoke-WebRequest -Uri "https://download.microsoft.com/download/1/2/8/128E2E22-C
 Write-Output "Install URL Rewrite Module"
 Start-Process -FilePath "C:\Temp\rewrite_amd64_en-US.msi" -ArgumentList "/quiet" -Wait
 
+Write-Output "Modify the default website index.html with the name of the computer"
+$new_content =
+@"
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Testing load balancing</h1>
+<p>Running on <b>$env:computername</b></p>
+</body>
+</html>
+"@
+
+Set-Content -Path C:\inetpub\wwwroot\index.html -Value $new_content
+
 Write-Output "Create a folder for the frontend app"
 mkdir $env:systemdrive\inetpub\wwwroot\frontend
 
@@ -30,5 +44,11 @@ New-IISSite -Name "TourOfHeroesAngular" -BindingInformation "*:8080:" -PhysicalP
 Write-Output "Create an aplication inside the new site"
 New-WebApplication -Name "TourOfHeroesAngular" -Site "TourOfHeroesAngular" -ApplicationPool "TourOfHeroesAngular" -PhysicalPath "$env:systemdrive\inetpub\wwwroot\frontend"
 
+# New-WebBinding -Name "TourOfHeroesAngular" -Protocol https -Port 443
+# Get-ChildItem cert:\localmachine\My | New-Item -Path IIS:\SslBindings\!443
+
 Write-Output "Enable 8080 port in the firewall"
 New-NetFirewallRule -DisplayName "Allow 8080" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
+
+# Write-Output "Enable 443 port in the firewall"
+# New-NetFirewallRule -DisplayName "Allow 443" -Direction Inbound -LocalPort 443 -Protocol TCP -Action Allow

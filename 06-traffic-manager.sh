@@ -1,4 +1,4 @@
-LOAD_BALANCER_NAME="tour-of-heroes-lb"
+LOAD_BALANCER_NAME="blue-green-lb"
 GREEN_IP_NAME="green-ip"
 BLUE_IP_NAME="blue-ip"
 PROBE_NAME="frontend-probe"

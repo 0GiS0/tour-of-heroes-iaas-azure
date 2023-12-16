@@ -44,11 +44,23 @@ New-IISSite -Name "TourOfHeroesAngular" -BindingInformation "*:8080:" -PhysicalP
 Write-Output "Create an aplication inside the new site"
 New-WebApplication -Name "TourOfHeroesAngular" -Site "TourOfHeroesAngular" -ApplicationPool "TourOfHeroesAngular" -PhysicalPath "$env:systemdrive\inetpub\wwwroot\frontend"
 
+Write-Output "Enable 8080 port in the firewall"
+New-NetFirewallRule -DisplayName "Allow 8080" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
+
+# Write-Output "Install Win-ACME"
+# Invoke-WebRequest -Uri "https://github.com/win-acme/win-acme/releases/download/v2.2.6.1571/win-acme.v2.2.6.1571.x64.trimmed.zip" -OutFile C:\Temp\win-acme.v2.2.6.1571.x64.trimmed.zip
+# Expand-Archive -Path C:\Temp\win-acme.v2.2.6.1571.x64.trimmed.zip -DestinationPath C:\Temp\win-acme
+
+# Write-Output "Create a new certificate"
+# C:\Temp\win-acme\wacs.exe --source iis `
+# --siteid 2 `
+
+
+
+
 # New-WebBinding -Name "TourOfHeroesAngular" -Protocol https -Port 443
 # Get-ChildItem cert:\localmachine\My | New-Item -Path IIS:\SslBindings\!443
 
-Write-Output "Enable 8080 port in the firewall"
-New-NetFirewallRule -DisplayName "Allow 8080" -Direction Inbound -LocalPort 8080 -Protocol TCP -Action Allow
 
 # Write-Output "Enable 443 port in the firewall"
 # New-NetFirewallRule -DisplayName "Allow 443" -Direction Inbound -LocalPort 443 -Protocol TCP -Action Allow

@@ -18,7 +18,7 @@ $new_content =
 <!DOCTYPE html>
 <html>
 <body>
-<h1>Testing load balancing</h1>
+<h1>Hello developer 👋🏻</h1>
 <p>Running on <b>$env:computername</b></p>
 </body>
 </html>
@@ -54,8 +54,6 @@ New-NetFirewallRule -DisplayName "Allow 8080" -Direction Inbound -LocalPort 8080
 # Write-Output "Create a new certificate"
 # C:\Temp\win-acme\wacs.exe --source iis `
 # --siteid 2 `
-
-
 
 
 # New-WebBinding -Name "TourOfHeroesAngular" -Protocol https -Port 443

@@ -1,4 +1,5 @@
 echo -e "Create a database vm named $DB_VM_NAME with image $DB_VM_IMAGE"
+
 az vm create \
 --resource-group $RESOURCE_GROUP \
 --name $DB_VM_NAME \

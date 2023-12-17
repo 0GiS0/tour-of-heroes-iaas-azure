@@ -6,7 +6,7 @@ VM_SIZE="Standard_B2s"
 STORAGE_ACCOUNT_NAME="tourofheroesbackups"
 
 # VNET variables
-VNET_NAME="tour-of-heroes-vnet"
+VNET_NAME="heroes-vnet"
 VNET_ADDRESS_PREFIX=192.168.0.0/16
 DB_SUBNET_NAME="db-subnet"
 DB_SUBNET_ADDRESS_PREFIX=192.168.1.0/24

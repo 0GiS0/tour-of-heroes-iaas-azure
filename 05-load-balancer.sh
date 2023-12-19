@@ -30,7 +30,7 @@ az network lb probe create \
 --lb-name $LOAD_BALANCER_NAME \
 --name $PROBE_NAME \
 --protocol tcp \
---port 8080
+--port 80
 
 echo -e "Create a load balancer rule"
 
@@ -76,7 +76,7 @@ FQDN_FRONTEND_VM_2=$(az vm create \
 --admin-password $FRONTEND_VM_ADMIN_PASSWORD \
 --vnet-name $VNET_NAME \
 --subnet $FRONTEND_SUBNET_NAME \
---public-ip-address-dns-name tour-of-heroes-frontend-vm-2 \
+--public-ip-address-dns-name tour-of-heroes-frontend-vm-2-bckp \
 --nsg "${FRONTEND_VM_NSG_NAME}-2" \
 --size $VM_SIZE --query "fqdns" -o tsv)
 
@@ -102,7 +102,7 @@ az vm run-command invoke \
 --name "${FRONTEND_VM_NAME}-2" \
 --command-id RunPowerShellScript \
 --scripts @scripts/install-tour-of-heroes-angular.ps1 \
---parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-web/releases/download/v2.0.0/dist.zip"
+--parameters "api_url=http://$FQDN_API_VM/api/hero" "release_url=https://github.com/0GiS0/tour-of-heroes-angular/releases/download/1.1.4/dist.zip"
 
 
 echo -e "Get front end VM 2 private IP address"
